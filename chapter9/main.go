@@ -24,6 +24,10 @@ type Shape interface {
     perim() float64
 }
 
+type MultiShape struct {
+	shapes []Shape
+}
+
 func distance(x1, y1, x2, y2 float64) float64 {
     a := x2 - x1
     b := y2 - y1
@@ -63,20 +67,39 @@ func totalCalc(shapes ...Shape) (float64, float64) {
     return area, perim
 }
 
+func (m *MultiShape) calc() (float64, float64) {
+	var area float64
+	var perim float64
+	for _, s := range m.shapes {
+		area += s.area()
+		perim += s.perim()
+	}
+	return area, perim
+}
+
 func main() {
     r := Rectangle{0, 0, 10, 5}
     fmt.Println("Площадь прямоугольника:", r.area())
     fmt.Println("Периметр прямоугольника:", r.perim())
-    fmt.Println()
+
+    fmt.Println("------")
     c := Circle{0, 0, 5}
     fmt.Println("Площадь круга:", c.area())
     fmt.Println("Перимерт окружности:", c.perim())
-    fmt.Println()
-    ta, tp := totalCalc(&c, &r)
-    fmt.Println("Общая площадь всех фигур:", ta)
-    fmt.Println("Oбщий периметр всех фигур:", tp)
 
-    fmt.Println()
+    fmt.Println("---totalCalc---")
+    tarea, tperim := totalCalc(&c, &r)
+    fmt.Println("Общая площадь всех фигур:", tarea)
+    fmt.Println("Oбщий периметр всех фигур:", tperim)
+
+    fmt.Println("---MultiShape---")
+    mshape := new(MultiShape)
+    mshape.shapes = []Shape{&c, &r}
+    marea, mperim := mshape.calc()
+    fmt.Println("Общая площадь всех фигур:", marea)
+    fmt.Println("Oбщий периметр всех фигур:", mperim)
+
+    fmt.Println("------")
     n := Person{"Вася"}
     //a := new(Android)
     a := Android{n, "Пупкин"}
